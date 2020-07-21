@@ -45,6 +45,20 @@ fashion_mnist = keras.datasets.fashion_mnist
 (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
 ```
 
+Labels are as foloows 
+
+Label	Class
+0	T-shirt/top
+1	Trouser
+2	Pullover
+3	Dress
+4	Coat
+5	Sandal
+6	Shirt
+7	Sneaker
+8	Bag
+9	Ankle boot
+
 2. Build the tf.keras.Sequential model by stacking layers.
 
 **Preprocessing the dataset**
