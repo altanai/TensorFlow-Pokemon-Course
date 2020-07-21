@@ -35,6 +35,11 @@ using kaggle db for data miniming on pokemon - https://www.kaggle.com/alopez247/
 step 1. Downlad handwriten digits dataset from MNIST using googleapis
 ref - http://yann.lecun.com/exdb/mnist/
 
+### Proj 3: ML is a classifier trained over the Fashion MNIST dataset
+
+dataset compromises of 70,000 grayscale images of articles of clothing.
+The greyscale values for a pixel range from 0-255 (black to white). Each low-resolution image is 28x28 pixels
+
 ```
 fashion_mnist = keras.datasets.fashion_mnist
 (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
@@ -83,10 +88,44 @@ Epoch 4/5
 60000/60000 [==============================] - 3s 46us/sample - loss: 0.3119 - acc: 0.8866
 Epoch 5/5
 60000/60000 [==============================] - 4s 61us/sample - loss: 0.2925 - acc: 0.8928
+```
+softmax activation function of the final output layer will provide a probability that the image belongs to each of the 10 label categories.
 
+**Evaluating the Model**
+After obtaining a functional and trained NN model, evaluate model . Find test accuracy
+```
+test_loss, test_acc = model.evaluate(test_images, test_labels)
+```
+you can outout the loss and accuracy 
+```
+>>> test_loss
+0.36592924320697784
+>>> test_acc
+0.8663
 ```
 
+Feed test exmaples from the test array . 
+```
+predictions = model.predict(test_images)
+```
+Observer for a single result predicted , most value are closer to zero , with raised to exponenets such as e-06 . however the value 9.6431386e-01 is more close to 1 ie 96.43% hence it classofies under label with index 9
+```
+ predictions[0]
+array([1.6079561e-05, 3.8696378e-08, 3.3632841e-07, 9.7230007e-08,
+       9.6133635e-06, 1.1564302e-02, 2.6221289e-06, 2.4083924e-02,
+       9.1205711e-06, 9.6431386e-01], dtype=float32)
 
+```
+Can look through a list to determine the class label , hence the prediction is label 9
+```
+>>> numpy.argmax(predictions[0])
+9
+```
+Finally, we can verify this prediction by looking at the label ourselves, indeed this object had label 9 
+```
+>>> test_labels[0]
+9
+```
 
 ##  debugging 
 
@@ -116,7 +155,7 @@ Python 3.6.9
 ```
 
 **Issue2** pip outdated
-as described above check pip version and make an alias 
+**solution** as described above check pip version and make an alias 
 ```
 > pip3 --version
 pip 9.0.1 from /usr/lib/python3/dist-packages (python 3.6)
