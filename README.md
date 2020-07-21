@@ -27,13 +27,113 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
 ```
-### Proj 1 : model to try to predict whether a Pokémon is a legendary Pokémon
-using kaggle db for data miniming on pokemon - https://www.kaggle.com/alopez247/pokemon
 
-### Proj 2 : neural network that classifies images.
+### Proj 1 : neural network that classifies images.
 
 step 1. Downlad handwriten digits dataset from MNIST using googleapis
 ref - http://yann.lecun.com/exdb/mnist/
+
+**Data Collection**
+Convert the samples from integers to floating-point numbers:
+```
+mnist = tf.keras.datasets.mnist
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_train, x_test = x_train / 255.0, x_test / 255.0
+```
+
+**Build Model**
+Build the tf.keras.Sequential stack layers
+```
+model = tf.keras.models.Sequential([
+  tf.keras.layers.Flatten(input_shape=(28, 28)),
+  tf.keras.layers.Dense(128, activation='relu'),
+  tf.keras.layers.Dropout(0.2),
+  tf.keras.layers.Dense(10)
+])
+```
+
+check the vectot of logits ( non normalized / raw predictions that classification model generates) . the logits is paased to a normalization function such as softmax to geneeate a vector of normalized probabilities .  
+and 
+logods ( log of odds of event ie ratio of probabaility of success p to proabaility of failure 1-p ,  p / 1-p )
+```
+predictions = model(x_train[:1]).numpy()
+array([[ 0.34590665, -0.51501477,  0.34438032,  0.656325  , -0.28661215,
+         0.00935765,  0.51382446, -0.17815022, -0.04149181, -0.1331951 ]],
+      dtype=float32)
+```
+
+tf.nn.softmax function converts these logits to "probabilities" for each class:
+```
+tf.nn.softmax(predictions).numpy()
+array([[0.12339833, 0.0521694 , 0.12321012, 0.16831477, 0.06555561,
+        0.08813488, 0.14596039, 0.07306582, 0.08376532, 0.07642545]],
+      dtype=float32)
+```
+
+Although softmax is directly interpretable for some modelas it cannot povide an exact and numerically stable loss function for all models 
+
+Hence we calculate the loss function which is zero signifies the correct class 
+```
+loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+loss_fn(y_train[:1], predictions).numpy()
+model.compile(optimizer='adam',
+              loss=loss_fn,
+              metrics=['accuracy'])
+model.fit(x_train, y_train, epochs=5)
+```
+see the incremental results after adjusting modal parameters to minimizee loss from epcah one 0.91 to epoch 5 0.97
+```
+Train on 60000 samples
+Epoch 1/5
+60000/60000 [==============================] - 3s 53us/sample - loss: 0.2965 - accuracy: 0.9137
+Epoch 2/5
+60000/60000 [==============================] - 3s 57us/sample - loss: 0.1433 - accuracy: 0.9584
+Epoch 3/5
+60000/60000 [==============================] - 4s 63us/sample - loss: 0.1091 - accuracy: 0.9676
+Epoch 4/5
+60000/60000 [==============================] - 4s 71us/sample - loss: 0.0874 - accuracy: 0.9728
+Epoch 5/5
+60000/60000 [==============================] - 4s 60us/sample - loss: 0.0760 - accuracy: 0.9763
+```
+check the performance of model on test set 
+```
+model.evaluate(x_test,  y_test, verbose=2)
+```
+the outout shows ~=0.98 accuracy
+```
+10000/10000 - 0s - loss: 0.0762 - accuracy: 0.9763
+[0.07620442808587104, 0.9763]
+```
+
+To further return a probaility apply softmax on model 
+```
+
+```
+**selftest**
+
+Digit's image at index of xtest 3 is 0 
+
+image ![Image of fig_3](fig_3.png) 
+you can edit array index in script show_mnist_handwritten_digits_image.py and run to get and store the image
+
+and the label on y_test[3] says 0 as well
+```
+y_test[3]
+0
+```
+
+lets check digit img ar position 3 with the predicted results 
+```
+>>> probability_model(x_test[:3])
+   [9.9985933e-01, 3.7119894e-11, 1.1895904e-04, 4.9979627e-07,
+        3.8895456e-07, 6.6416396e-07, 1.2701520e-05, 6.1525652e-06,
+        9.6602575e-09, 1.2553021e-06],
+```
+the probaility at zeroth index being the highest 9.9985933e-01, , hence image correctly predicted as 0
+
+
+### Proj 2 : model to try to predict whether a Pokémon is a legendary Pokémon
+using kaggle db for data miniming on pokemon - https://www.kaggle.com/alopez247/pokemon
 
 ### Proj 3: ML is a classifier trained over the Fashion MNIST dataset
 
@@ -140,6 +240,9 @@ Finally, we can verify this prediction by looking at the label ourselves, indeed
 >>> test_labels[0]
 9
 ```
+
+### Proj 4: Visualization for proj 3 ML is a classifier trained over the Fashion MNIST dataset
+
 
 ##  debugging 
 
